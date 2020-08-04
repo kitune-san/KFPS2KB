@@ -4,7 +4,9 @@
 //
 // Written by kitune-san
 //
-module KFPS2KB_Shift_Register (
+module KFPS2KB_Shift_Register #(
+    parameter over_time = 16'd1000
+) (
     input   logic           clock,
     input   logic           reset,
 
@@ -28,6 +30,9 @@ module KFPS2KB_Shift_Register (
     logic   [8:0]   shift_register;
     logic   [3:0]   bit_count;
     logic           parity_bit;
+
+    logic   [15:0]  receiving_time;
+    logic           over_receiving_time;
 
     shit_state_t    next_state;
     shit_state_t    state;
@@ -84,12 +89,35 @@ module KFPS2KB_Shift_Register (
 
 
     //
+    // Count receiving time
+    //
+    always_ff @(negedge clock, posedge reset) begin
+        if (reset)
+            receiving_time <= 16'h0000;
+        else if (state == READY)
+            receiving_time <= 16'h0000;
+        else if (device_clock_edge)
+            receiving_time <= 16'h0000;
+        else if (over_receiving_time == 1'b0)
+            receiving_time <= receiving_time + 16'h0001;
+        else
+            receiving_time <= receiving_time;
+    end
+
+    assign over_receiving_time = (receiving_time >= over_time) ? 1'b1 : 1'b0;
+
+
+    //
     // Recieved flag and error flag
     //
     always_ff @(negedge clock, posedge reset) begin
         if (reset) begin
             recieved_flag <= 1'b0;
             error_flag    <= 1'b0;
+        end
+        else if (over_receiving_time) begin
+            recieved_flag <= 1'b0;
+            error_flag    <= 1'b1;
         end
         else if (state == STOPBIT) begin
             if (device_clock_edge) begin
@@ -153,6 +181,9 @@ module KFPS2KB_Shift_Register (
                     next_state = STOPBIT;
             end
         endcase
+
+        if (over_receiving_time)
+            next_state = READY;
     end
 
     always_ff @(negedge clock, posedge reset) begin

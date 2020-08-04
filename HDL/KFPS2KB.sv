@@ -4,7 +4,9 @@
 //
 // Written by kitune-san
 //
-module KFPS2KB (
+module KFPS2KB #(
+    parameter over_time = 16'd1000
+) (
     input   logic           clock,
     input   logic           reset,
 
@@ -27,7 +29,9 @@ module KFPS2KB (
     //
     // Shift register
     //
-    KFPS2KB_Shift_Register u_Shift_Register (
+    KFPS2KB_Shift_Register #(
+        .over_time      (over_time)
+    ) u_Shift_Register (
         .clock          (clock),
         .reset          (reset),
 

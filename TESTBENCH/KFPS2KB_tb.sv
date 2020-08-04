@@ -68,7 +68,8 @@ module KFPS2KB_tm();
     logic   [7:0]   keycode;
     logic           clear_keycode;
 
-    KFPS2KB u_KFPS2KB (.*);
+    KFPS2KB #(.over_time (16'd6)
+    ) u_KFPS2KB (.*);
 
 
     //
@@ -156,6 +157,47 @@ module KFPS2KB_tm();
     endtask
 
     //
+    // Task : TEST TIMEOUUT
+    //
+    task TASK_TEST_TIMEOUT(input [10:0] data);
+    begin
+        #(`TB_CYCLE * 0);
+        device_clock  = 1'b1;
+        device_data   = 1'b1;
+        clear_keycode = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        device_data   = data[10];
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        device_data   = data[9];
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        device_data   = data[8];
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        device_data   = data[7];
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        device_data   = data[6];
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b0;
+        #(`TB_CYCLE * 3);
+        device_clock  = 1'b1;
+        #(`TB_CYCLE * 6);
+    end
+    endtask
+
+
+    //
     // Test pattern
     //
     initial begin
@@ -194,6 +236,9 @@ module KFPS2KB_tm();
         clear_keycode = 1'b1;
         #(`TB_CYCLE * 1);
         clear_keycode = 1'b0;
+
+        // Test timeout
+        TASK_TEST_TIMEOUT(11'b0_0101_0101_0_1);
 
         #(`TB_CYCLE * 1);
         // End of simulation
