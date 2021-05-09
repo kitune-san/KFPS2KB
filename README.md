@@ -1,18 +1,24 @@
 # KFPS2KB - Simple PS/2 keyboard controller
 
-## 概要
-IO(8255)に直接接続できるように設計したPS/2のキーボードコントローラーです。
+## About
+KFPS2KB is simple PS/2 keybord contoroller.
 
-入力のみ受付を行い、こちら側からデータを送信することはありません。
+This module support input from keybord only.
 
+|port         |I/O|connect(exampe)|
+|:------------|---|---------------|
+|clock        |I  |CLK            |
+|reset        |I  |RESET          |
+|device_clock |I  |DIN #5         |
+|device_data  |I  |DIN #1         |
+|irq          |O  |8259 IRQ1      |
+|key_code[7:0]|O  |8255 PA0-7     |
+|clear_keycode|I  |8255 PB7       |
 
-|ポート       |I/O|機能                                |接続先(例)|
-|:------------|---|------------------------------------|----------|
-|clock        |I  |システムメインクロック              |CLK       |
-|reset        |I  |リセット入力                        |RESET     |
-|device_clock |I  |PS/2クロック入力                    |DIN #5    |
-|device_data  |I  |PS/2データ入力                      |DIN #1    |
-|irq          |O  |データ受信状態                      |IRQ1      |
-|key_code[7:0]|O  |受信キーコード                      |8255 PA0-7|
-|clear_keycode|I  |受信コードクリア(次のキーコード受信)|8255 PB7  |
+## Features
+- Connect to PS/2 Keybord
+- Detect Make/Break keycode
+
+## Block
+![KFPS2KB_block](DOC/img/KFPS2KB_block.png)
 
