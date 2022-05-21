@@ -17,7 +17,6 @@ This module support input from keybord only.
 
 ## Features
 - Connect to PS/2 Keybord
-- Detect Make/Break keycode
 
 ## Block
 ![KFPS2KB_block](DOC/img/KFPS2KB_block.png)
